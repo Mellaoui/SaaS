@@ -10,8 +10,11 @@
 
 - Setup your  app
 - run `composer install` (to install all the packages )
+- run `cp .env.example .env` (to create .env file )
+- run `php artisan key:generate` (to generate app key)
+- run `php artisan migrate` (to migrate the database)
 - run `npm insatll && npm run dev` 
-- `php artisan key:generate` (to generate app key)
+
 
 ## Testing
 
