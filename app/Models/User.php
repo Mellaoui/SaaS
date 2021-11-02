@@ -29,11 +29,11 @@ class User extends Authenticatable
 
     public function companies()
     {
-        return $this->belongsToMany(Company::class)->withPivot('role');
+        return $this->belongsToMany(Company::class)->withPivot('role')->withTimestamps();
     }
 
-    public function task()
+    public function tasks()
     {
-        return $this->hasOne(Task::class);
+        return $this->hasMany(Task::class)->withTimestamps();
     }
 }
