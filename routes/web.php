@@ -32,4 +32,7 @@ Route::get('/dashboard', function () {
 Route::get('/tasks/{task}/assign/{user}', [TasksController::class, 'assignToUser'])->name('task.assign');
 Route::resource('/branches/{branch}/tasks', TasksController::class);
 
+Route::get('export', [TasksController::class, 'export'])->name('export');
+Route::post('import', [TasksController::class],'import')->name('import');
+
 require __DIR__.'/auth.php';

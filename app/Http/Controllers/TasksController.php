@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TasksExport;
+use App\Imports\TasksImport;
 use App\Models\Branch;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TasksController extends Controller
 {
@@ -90,6 +93,16 @@ class TasksController extends Controller
     public function destroy(Task $task)
     {
         //
+    }
+
+    public function export()
+    {
+        return Excel::download(new TasksExport, 'tasks.xlxs');
+    }
+
+    public function import()
+    {
+        Excel::import(new TasksImport,request()->file('file'));
     }
 
     /**
