@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\Task;
+use App\Models\TaskUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -84,12 +85,52 @@ class TaskTest extends TestCase
         $response->assertForbidden();
     }
 
-    // public function test_admin_can_assign_task_to_employee()
-    // {
-    //     $this->actingAs($this->admin);
+    public function test_admin_can_assign_task_to_employee()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->actingAs($this->admin);
+
+        $response = $this->get(route('tasks.assign', [
+            'user' => $this->employee,
+            'task' => $this->task
+        ]));
+
+        $this->assertCount(1, TaskUser::all());
+        $response->assertSeeText('successfully');
+        $response->assertOk();
+    }
+
+    public function test_employee_cannot_assign_task()
+    {
+        $this->actingAs($this->employee);
 
     //     // next
     // }
+        $response = $this->get(route('tasks.assign', [
+            'user' => $this->employee,
+            'task' => $this->task
+        ]));
+
+        $this->assertCount(0, TaskUser::all());
+        $response->assertSeeText('Only Admin');
+        $response->assertForbidden();
+    }
+
+    public function test_non_employee_cannot_be_assigned_task()
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get(route('tasks.assign', [
+            'user' => $this->guest,
+            'task' => $this->task
+        ]));
+
+        $this->assertCount(0, TaskUser::all());
+        $response->assertSeeText('Only Employees');
+        $response->assertForbidden();
+    }
+
 
     /**
      * Returns the required fields to create a task

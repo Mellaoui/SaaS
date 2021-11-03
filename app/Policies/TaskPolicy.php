@@ -96,8 +96,22 @@ class TaskPolicy
         //
     }
 
-    // public function assignToUser(User $user, Task $task, User $employee)
-    // {
-        // dd($task->branch->company->employees()->get()->contains('id', $employee->id));
-    // }
+    /**
+     * Determine whether the user can assign a task to another user.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Task  $task
+     * @param  \App\Models\User  $employee
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function assignToUser(User $user, Task $task, User $employee)
+    {
+        $company = $task->branch->company;
+
+        return $company->admin()->get()->contains('id', $user->id)
+            ? ($company->employees()->get()->contains('id', $employee->id)
+                ? Response::allow()
+                : Response::deny('Only Employees of (' . $company->name . ') can be assigned this task'))
+            : Response::deny('Only Admin of (' . $company->name . ') can assign tasks');
+    }
 }

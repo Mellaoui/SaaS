@@ -112,39 +112,19 @@ class TasksController extends Controller
         ]);
     }
 
+    
     /**
      *  Assign a task to a user.
-     *  @param \App\Models\Task $task
-     *  @param \App\Models\User $user
-     *  @return string
+     *  @param  \App\Models\Task $task
+     *  @param  \App\Models\User $user
+     *  @return \Illuminate\Http\Response|string
      */
     public function assignToUser(Task $task, User $user)
     {
-        // $company = $task->branch->company;
-        // Authorization required from the admin
+        $this->authorize('assignToUser', [$task, $user]);
 
-        // next changes :
+        $task->users()->save($user);
 
-        // authorization should use the TaskPolicy in the next refactor.
-        // the (task, employee) uniqueness is handled in the database but should also be handled here in the controller.
-
-        // is company admin
-        // if (Auth::user()->id == $task->branch->company->admin()->first()->id) {
-        //     // is company employee
-        //     if ($task->branch->company->employees()->get()->contains('id', $user->id)) {
-        //         $task->users()->save($user);
-        //         return '(' . $user->name . ') was assigned the task (' . $task->title . ').';
-        //     }
-        //     // is not company employee
-        //     else {
-        //         return 'Only employees of (' . $company->name . ') can be assigned this task';
-        //     }
-        // }
-        // // is not company admin
-        // else {
-        //     return 'Only the Admin of (' . $company->name . ') can assign tasks';
-        // }
-
-        // $this->authorize('assignToUser', [$task, $user]);
+        return '(' . $user->name . ') was successfully assigned the task (' . $task->title . ').';
     }
 }
