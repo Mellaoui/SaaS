@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
 
         foreach (Branch::all() as $branch) {
             Task::factory(5)->for($branch)
-            ->sequence(fn ($sequence) => ['user_id' => $branch->company->employees()->get()->random()->id])
+            // ->sequence(fn ($sequence) => ['user_id' => $branch->company->employees()->get()->random()->id])
             ->has(Schedule::factory())
             ->create();
         }

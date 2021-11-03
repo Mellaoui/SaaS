@@ -19,7 +19,6 @@ class CreateTasksTable extends Migration
             $table->string('priority');
             $table->string('media');
 
-            $table->foreignId('user_id');
             $table->foreignId('branch_id');
 
             $table->timestamps();

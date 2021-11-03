@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TasksController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,6 +31,5 @@ Route::get('/dashboard', function () {
 
 Route::get('/tasks/{task}/assign/{user}', [TasksController::class, 'assignToUser']);
 Route::resource('/branches/{branch}/tasks', TasksController::class);
-
 
 require __DIR__.'/auth.php';

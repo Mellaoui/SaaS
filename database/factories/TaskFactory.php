@@ -17,7 +17,6 @@ class TaskFactory extends Factory
             'priority' => $this->faker->numberBetween(1, 10),
             'media' => $this->faker->text(10),
 
-            // user_id
             // branch_id
         ];
     }
