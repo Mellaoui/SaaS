@@ -2,6 +2,8 @@
 
 ## Stack
 - Laravel
+- inertia
+- vue js
 - OpenAPI (for documentation & design)
 - Database(MySQL / mariaDB)
 
