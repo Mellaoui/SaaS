@@ -25,4 +25,9 @@ class Task extends Model
     {
         return $this->hasOne(Schedule::class);
     }
+
+    public function progressReports()
+    {
+        return $this->hasMany(ProgressReport::class);
+    }
 }
