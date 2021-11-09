@@ -36,4 +36,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Task::class)->withTimestamps();
     }
+
+    public function isSuperAdmin(){
+        return $this->super_admin === true;
+    }
 }

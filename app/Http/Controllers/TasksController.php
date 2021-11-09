@@ -117,10 +117,11 @@ class TasksController extends Controller
             'title' => 'required',
             'description' => 'required',
             'start_date' => 'sometimes',
-            'due_date' => 'sometimes',
-            'progress' => 'required',
+            'due_date' => 'sometimes|date',
+            'progress' => 'required|date',
             'priority' => 'required',
             'media' => 'sometimes',
+            
             'branch_id' => 'required|exists:branches,id',
         ]);
     }

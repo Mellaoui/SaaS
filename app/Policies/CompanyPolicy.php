@@ -3,25 +3,23 @@
 namespace App\Policies;
 
 use App\Models\Company;
-use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
-class TaskPolicy
+class CompanyPolicy
 {
     use HandlesAuthorization;
 
-      /**
+    /**
      * Perform pre-authorization checks.
      *
      * @param  \App\Models\User  $user
      * @param  string  $ability
      * @return void|bool
      */
-    public function before(User $user, $ability)
-    {
-        if ($user->isSuperAdmin()) {
+    public function before(User $user, $ability){
+        if($user->isSuperAdmin()){
             return true;
         }
     }
@@ -41,10 +39,10 @@ class TaskPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Task  $task
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Task $task)
+    public function view(User $user, Company $company)
     {
         //
     }
@@ -55,45 +53,47 @@ class TaskPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user, Company $company)
+    public function create(User $user)
     {
-        return $company->users->contains('id', $user->id)
-            ? Response::allow()
-            : Response::deny('Only (' . $company->name . ') company members can add tasks');
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Task  $task
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Task $task)
+    public function update(User $user, Company $company)
     {
-        // return $user->id == $task->branch->company->admin()->first()->id;
+        return $company->admin()->get()->contains('id', $user->id)
+            ? Response::allow()
+            : Response::deny('Only Admin can update this company');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Task  $task
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Task $task)
+    public function delete(User $user, Company $company)
     {
-        //
+        return $company->admin()->get()->contains('id', $user->id)
+            ? Response::allow()
+            : Response::deny('Only Admin can delete this company');
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Task  $task
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Task $task)
+    public function restore(User $user, Company $company)
     {
         //
     }
@@ -102,30 +102,11 @@ class TaskPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Task  $task
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Task $task)
+    public function forceDelete(User $user, Company $company)
     {
         //
-    }
-
-    /**
-     * Determine whether the user can assign a task to another user.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Task  $task
-     * @param  \App\Models\User  $employee
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function assignToUser(User $user, Task $task, User $employee)
-    {
-        $company = $task->branch->company;
-
-        return $company->admin()->get()->contains('id', $user->id)
-            ? ($company->employees()->get()->contains('id', $employee->id)
-                ? Response::allow()
-                : Response::deny('Only Employees of (' . $company->name . ') can be assigned this task'))
-            : Response::deny('Only Admin of (' . $company->name . ') can assign tasks');
     }
 }

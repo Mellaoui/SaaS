@@ -29,10 +29,34 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/tasks/{task}/assign/{user}', [TasksController::class, 'assignToUser'])->name('task.assign');
-Route::resource('/branches/{branch}/tasks', TasksController::class);
+Route::middleware('auth')->group(function () {
+    Route::get(
+        '/tasks/{task}/assign/{user}',
+        [TasksController::class, 'assignToUser']
+    )->name('tasks.assign');
+    Route::resource(
+        '/branches/{branch}/tasks',
+        TasksController::class
+    );
+    Route::resource(
+        '/companies/{company}/branches',
+        BranchesController::class
+    );
+    Route::resource(
+        '/companies',
+        CompaniesController::class
+    );
+    Route::get(
+        '/companies/{company}/invite/{user}',
+        [CompaniesController::class, 'inviteUser']
+    )->name('companies.invite');
+    Route::get(
+        '/companies/{company}/add/{user}',
+        [CompaniesController::class, 'addEmployee']
+    )->name('companies.add');
+});
 
-Route::get('export', [TasksController::class, 'export'])->name('export');
-Route::post('import', [TasksController::class],'import')->name('import');
+//Route::get('export', [TasksController::class, 'export'])->name('export');
+//Route::post('import', [TasksController::class],'import')->name('import');
 
 require __DIR__.'/auth.php';
