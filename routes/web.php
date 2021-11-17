@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Controllers\BranchesController;
+use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\TasksController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\NewAccessToken;
 use Inertia\Inertia;
 
 /*
@@ -30,33 +35,45 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/tokens/create', function (Request $request) {
+        $token = $request->user()->createToken(Hash::make($request->user()->name));
+        return ['token' => $token->plainTextToken];
+    });
+
     Route::get(
         '/tasks/{task}/assign/{user}',
         [TasksController::class, 'assignToUser']
     )->name('tasks.assign');
+
     Route::resource(
         '/branches/{branch}/tasks',
         TasksController::class
     );
+
     Route::resource(
         '/companies/{company}/branches',
         BranchesController::class
     );
+
     Route::resource(
         '/companies',
         CompaniesController::class
     );
+
     Route::get(
         '/companies/{company}/invite/{user}',
         [CompaniesController::class, 'inviteUser']
     )->name('companies.invite');
+
+    Route::get(
+        '/companies/{company}/accept',
+        [CompaniesController::class, 'acceptInvite']
+    )->name('companies.accept');
+
     Route::get(
         '/companies/{company}/add/{user}',
         [CompaniesController::class, 'addEmployee']
     )->name('companies.add');
 });
 
-//Route::get('export', [TasksController::class, 'export'])->name('export');
-//Route::post('import', [TasksController::class],'import')->name('import');
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

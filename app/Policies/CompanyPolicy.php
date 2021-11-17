@@ -87,6 +87,20 @@ class CompanyPolicy
     }
 
     /**
+     * Adds the user as invitee of the company.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function acceptInvite(User $user, Company $company)
+    {
+        return $company->invitees()->get()->contains('id', $user->id)
+            ? Response::allow()
+            : Response::deny('Only Invitees can accept invites');
+    }
+
+    /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user

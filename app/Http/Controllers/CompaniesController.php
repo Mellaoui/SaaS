@@ -14,7 +14,9 @@ class CompaniesController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('viewAny', Company::class);
+
+        return Company::all()->toJson(JSON_PRETTY_PRINT);
     }
 
     /**
@@ -50,7 +52,9 @@ class CompaniesController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        $this->authorize('view', $company);
+
+        return $company->toJson(JSON_PRETTY_PRINT);
     }
 
     /**
@@ -95,6 +99,37 @@ class CompaniesController extends Controller
         $company->delete();
 
         return 'Company ( ' . $companyName . ' ) was successfully deleted';
+    }
+
+    // --- Extra --- //
+
+    public function inviteUser(Company $company, User $user)
+    {
+        $this->authorize('inviteUser', [$company, $user]);
+
+        $company->invitees()->save($user, ['role' => 'invitee']);
+
+        return $user->name . ' was successfully invited to join ( ' . $company->name . ' ).';
+    }
+
+    public function acceptInvite(Company $company)
+    {
+        $user = Auth::user();
+
+        $this->authorize('acceptInvite', $company);
+
+        $company->invitees()->updateExistingPivot($user->id, ['role' => 'employee']);
+
+        return $user->name . ' was successfully added to ( ' . $company->name . ' ) as an Employee.';
+    }
+
+    public function addEmployee(Company $company, User $user)
+    {
+        $this->authorize('addEmployee', [$company, $user]);
+
+        $company->employees()->save($user, ['role' => 'employee']);
+
+        return $user->name . ' was successfully added to ( ' . $company->name . ' ) as an Employee.';
     }
 
     // --- Validation --- //
