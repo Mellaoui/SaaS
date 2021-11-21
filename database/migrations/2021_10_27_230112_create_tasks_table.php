@@ -13,8 +13,8 @@ class CreateTasksTable extends Migration
 
             $table->string('title');
             $table->string('description');
-            $table->dateTime('start_date');
-            $table->dateTime('due_date');
+            $table->string('start_date');
+            $table->string('due_date');
             $table->string('progress');
             $table->string('priority');
             $table->string('media');

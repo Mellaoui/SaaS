@@ -39,7 +39,7 @@ class User extends Authenticatable
 
     public function isSuperAdmin()
     {
-        return $this->super_admin === true;
+        return $this->super_admin == true;
     }
 
     public function userReports()
